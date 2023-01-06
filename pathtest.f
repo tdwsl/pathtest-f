@@ -21,9 +21,10 @@ create map
 mapw maph * constant mapsz
 create path-map mapsz allot
 create map-buf mapsz allot
+variable b
 
 : in-bounds ( x y -- )
-  2dup 0>= swap 0>= and >r maph < swap mapw < and r> and ;
+  2dup 0 >= swap 0 >= and >r maph < swap mapw < and r> and ;
 
 : mapi ( x y -- i )
   mapw * + ;
@@ -35,10 +36,11 @@ create map-buf mapsz allot
   mapsz 0 do map i + c@ 0<> path-map i + c! loop
   mapi path-map + 1 swap c!
   255 1 do
+    i b !
     mapsz 0 do path-map i + c@ j = if
       4 0 do j mapw /mod i dir+
         2dup in-bounds if
-          mapi path-map + dup c@ 0= if k 1+ swap c! else drop then
+          mapi path-map + dup c@ 0= if b @ 1+ swap c! else drop then
       else 2drop then loop
   then loop loop ;
 
